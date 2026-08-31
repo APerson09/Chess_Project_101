@@ -4,6 +4,7 @@
     align-items: center;
     height:100vh;
     margin: 0;
+    background-color: bisque;
 }
 
 .mainBoardArea {
@@ -16,14 +17,10 @@
     grid-template-rows: repeat(8, 1fr);
 }
 
-.whiteChessSquare {
-    width: 87.5px;
-    height: 87.5px;
+.white {
     background-color: white;
 }
 
-.blackChessSquare {
-    width: 87.5px;
-    height: 87.5px;
+.black {
     background-color: black;
 }

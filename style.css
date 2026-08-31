@@ -1,0 +1,29 @@
+.mainContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height:100vh;
+    margin: 0;
+}
+
+.mainBoardArea {
+    width: 700px;
+    height: 700px;
+    border: 1px solid black;
+
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+}
+
+.whiteChessSquare {
+    width: 87.5px;
+    height: 87.5px;
+    background-color: white;
+}
+
+.blackChessSquare {
+    width: 87.5px;
+    height: 87.5px;
+    background-color: black;
+}

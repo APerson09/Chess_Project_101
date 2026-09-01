@@ -4,13 +4,14 @@
     align-items: center;
     height:100vh;
     margin: 0;
-    background-color: bisque;
+    background-color: white;
 }
 
 .mainBoardArea {
     width: 700px;
     height: 700px;
     border: 1px solid black;
+    position: relative;
 
     display: grid;
     grid-template-columns: repeat(8, 1fr);
@@ -18,9 +19,117 @@
 }
 
 .white {
-    background-color: white;
+    background-color: #C4A484;
 }
 
 .black {
-    background-color: black;
+    background-color: #654321;
+}
+
+#whiteKing {
+    width: 90%;
+    height: 90%;
+
+    object-fit: contain;
+    display: block;
+    margin: 5% auto;
+}
+
+#blackKing {
+    width: 90%;
+    height: 90%;
+
+    object-fit: contain;
+    display: block;
+    margin: 5% auto;
+}
+
+#whiteQueen {
+    width: 90%;
+    height: 90%;
+
+    object-fit: contain;
+    display: block;
+    margin: 5% auto;
+}
+
+#blackQueen {
+    width: 90%;
+    height: 90%;
+
+    object-fit: contain;
+    display: block;
+    margin: 5% auto;
+}
+
+#whiteBishop {
+    width: 90%;
+    height: 90%;
+
+    object-fit: contain;
+    display: block;
+    margin: 5% auto;
+}
+
+#blackBishop {
+    width: 90%;
+    height: 90%;
+
+    object-fit: contain;
+    display: block;
+    margin: 5% auto;
+}
+
+#whiteKnight {
+    width: 90%;
+    height: 90%;
+
+    object-fit: contain;
+    display: block;
+    margin: 5% auto;
+}
+
+#blackKnight {
+    width: 90%;
+    height: 90%;
+
+    object-fit: contain;
+    display: block;
+    margin: 5% auto;
+}
+
+#whiteRook {
+    width: 90%;
+    height: 90%;
+
+    object-fit: contain;
+    display: block;
+    margin: 5% auto;
+}
+
+#blackRook {
+    width: 90%;
+    height: 90%;
+
+    object-fit: contain;
+    display: block;
+    margin: 5% auto;
+}
+
+#whitePawn {
+    width: 85%;
+    height: 85%;
+
+    object-fit: contain;
+    display: block;
+    margin: 5% auto;
+}
+
+#blackPawn {
+    width: 85%;
+    height: 85%;
+
+    object-fit: contain;
+    display: block;
+    margin: 5% auto;
 }

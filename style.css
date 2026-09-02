@@ -7,15 +7,15 @@
     background-color: white;
 }
 
-.mainBoardArea {
+#mainBoardArea {
     width: 700px;
     height: 700px;
     border: 1px solid black;
     position: relative;
 
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
+    grid-template-columns: repeat(8, 12.5%);
+    grid-template-rows: repeat(8, 12.5%);
 }
 
 .white {
@@ -26,110 +26,54 @@
     background-color: #654321;
 }
 
-#whiteKing {
+.piece {
     width: 90%;
     height: 90%;
+    max-width: 100%;
 
     object-fit: contain;
     display: block;
     margin: 5% auto;
 }
 
-#blackKing {
-    width: 90%;
-    height: 90%;
+.pawn {
+    width: 70%;
+    height: 70%;
 
-    object-fit: contain;
-    display: block;
-    margin: 5% auto;
+    margin: 15% auto;
 }
 
-#whiteQueen {
-    width: 90%;
-    height: 90%;
+.rook {
+    width: 75%;
+    height: 75%;
 
-    object-fit: contain;
-    display: block;
-    margin: 5% auto;
+    margin: 12.5% auto;
 }
 
-#blackQueen {
-    width: 90%;
-    height: 90%;
+.horse {
+    width: 80%;
+    height: 80%;
 
-    object-fit: contain;
-    display: block;
-    margin: 5% auto;
+    margin: 10% auto;
 }
 
-#whiteBishop {
-    width: 90%;
-    height: 90%;
+.bishop {
+    width: 80%;
+    height: 80%;
 
-    object-fit: contain;
-    display: block;
-    margin: 5% auto;
+    margin: 10% auto;
 }
 
-#blackBishop {
-    width: 90%;
-    height: 90%;
+.queen {
+    width: 80%;
+    height: 80%;
 
-    object-fit: contain;
-    display: block;
-    margin: 5% auto;
+    margin: 10% auto;
 }
 
-#whiteKnight {
-    width: 90%;
-    height: 90%;
+.king {
+    width: 80%;
+    height: 80%;
 
-    object-fit: contain;
-    display: block;
-    margin: 5% auto;
-}
-
-#blackKnight {
-    width: 90%;
-    height: 90%;
-
-    object-fit: contain;
-    display: block;
-    margin: 5% auto;
-}
-
-#whiteRook {
-    width: 90%;
-    height: 90%;
-
-    object-fit: contain;
-    display: block;
-    margin: 5% auto;
-}
-
-#blackRook {
-    width: 90%;
-    height: 90%;
-
-    object-fit: contain;
-    display: block;
-    margin: 5% auto;
-}
-
-#whitePawn {
-    width: 85%;
-    height: 85%;
-
-    object-fit: contain;
-    display: block;
-    margin: 5% auto;
-}
-
-#blackPawn {
-    width: 85%;
-    height: 85%;
-
-    object-fit: contain;
-    display: block;
-    margin: 5% auto;
+    margin: 10% auto;
 }

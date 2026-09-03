@@ -92,10 +92,15 @@ for(let i = 0; i < 8; i++) {
 let selectedPiece = null;
 
 board.addEventListener("click", function(event) {
-    const clickedElement = event.target;
+    let clickedElement = event.target;
 
+    if(clickedElement.classList.contains("dot")) {
+        clickedElement = clickedElement.parentElement;
+    }
+    
     if(selectedPiece) {
         if(clickedElement.classList.contains("white") || clickedElement.classList.contains("black")) {
+            clearLegalMoves();
             const startingSquare = selectedPiece.parentElement;
             const startingRow = parseInt(startingSquare.dataset.row);
             const startingCol = parseInt(startingSquare.dataset.col);
@@ -103,8 +108,9 @@ board.addEventListener("click", function(event) {
             const targetRow = parseInt(clickedElement.dataset.row);
             const targetCol = parseInt(clickedElement.dataset.col);
 
+            let validMove = false;
+
             if(selectedPiece.id.includes("Pawn")) {
-                let validMove = false;
 
                 if(selectedPiece.id.includes("white")) {
                     if(startingRow === 6 && targetRow === 4 && startingCol === targetCol) {
@@ -124,70 +130,367 @@ board.addEventListener("click", function(event) {
                 }
 
                 if(validMove) {
-                    if(clickedElement.children.length === 0) {
-                        clickedElement.appendChild(selectedPiece);
-                        if(selectedPiece.classList.contains("selected")) {
-                            selectedPiece.classList.remove("selected");
-                        }
-                        selectedPiece = null;
-                        console.log("Piece moved to:", clickedElement);
-                    }
-                    else {
-                        console.log("Square is occupied. Cannot move piece.");
-                    }
+                    checkMove(clickedElement);
                 }
                 else {
                     console.log("Invalid move for pawn.");
                 }
             }
-            else {
-                if(clickedElement.children.length === 0) {
-                    clickedElement.appendChild(selectedPiece);
-                    if(selectedPiece.classList.contains("selected")) {
-                        selectedPiece.classList.remove("selected");
+            else if(selectedPiece.id.includes("Bishop")) {
+                const targetSquare = clickedElement.tagName === "IMG" ? clickedElement.parentElement : clickedElement;
+                if(isValidBishop(startingRow, startingCol, targetRow, targetCol)) {
+                    validMove = true;
+
+                    if(clickedElement.children.length === 0) {
+                        movePiece(clickedElement);
                     }
-                    selectedPiece = null;
-                    console.log("Piece moved to:", clickedElement);
+                    else {
+                        console.log("Something is there. . .");
+                    }
                 }
                 else {
-                    console.log("Square is occupied. Cannot move piece.");
+                    console.log("Invalid move for bishop.");
                 }
+            }
+            else if(selectedPiece.id.includes("Knight")) {
+                if(isValidKnight(startingRow, startingCol, targetRow, targetCol)) {
+                    validMove = true;
+
+                    if(clickedElement.children.length === 0) {
+                        movePiece(clickedElement);
+                    }
+                    else {
+                        console.log("Something is there.");
+                    }
+                }
+                else {
+                    console.log("Invalid move for knight.");
+                }
+            }
+            else if(selectedPiece.id.includes("Rook")) {
+                if(isValidRook(startingRow, startingCol, targetRow, targetCol)) {
+                    validMove = true;
+
+                    if(clickedElement.children.length === 0) {
+                        movePiece(clickedElement);
+                    }
+                    else {
+                        console.log("Something is there. . .");
+                    }
+                }
+                else {
+                    console.log("Invalid move for rook.");
+                }
+            }
+            else if(selectedPiece.id.includes("Queen")) {
+                if(isValidBishop(startingRow, startingCol, targetRow, targetCol) || isValidRook(startingRow, startingCol, targetRow, targetCol)) {
+                    validMove = true;
+                    if(clickedElement.children.length === 0) {
+                        movePiece(clickedElement);
+                    }
+                    else {
+                        console.log("Something is there. . .");
+                    }
+                }
+                else {
+                    console.log("Invalid move for queen.");
+                }
+            }
+            else if(selectedPiece.id.includes("King")) {
+                if(isValidKing(startingRow, startingCol, targetRow, targetCol)) {
+                    validMove = true;
+                    if(clickedElement.children.length === 0) {
+                        movePiece(clickedElement);
+                    }
+                    else {
+                        console.log("Something is there. . .");
+                    }
+                }
+                else {
+                    console.log("Invalid move for king.");
+                }
+            }
+            else {
+                checkMove(clickedElement);
             }
         }
         else if(clickedElement.tagName === "IMG") {
-            
+
             if(clickedElement === selectedPiece) {
+
                 selectedPiece = null;
+                clearLegalMoves();
                 console.log("Deselected piece");
             }
             else if(clickedElement.parentElement === selectedPiece.parentElement) {
                 selectedPiece = null;
+                clearLegalMoves();
                 console.log("Deselected piece");
             }
-            else if(selectedPiece.id.includes("white") && clickedElement.id.includes("white")) {
+            else if(selectedPiece.id.includes("white") && clickedElement.id.includes("white") || selectedPiece.id.includes("black") && clickedElement.id.includes("black")) {
                 selectedPiece.classList.remove("selected");
                 selectedPiece = clickedElement;
                 selectedPiece.classList.add("selected");
-                console.log("Selected piece: white", selectedPiece);
-            }
-            else if(selectedPiece.id.includes("black") && clickedElement.id.includes("black")) {
-                selectedPiece.classList.remove("selected");
-                selectedPiece = clickedElement;
-                selectedPiece.classList.add("selected");
-                console.log("Selected piece: black", selectedPiece);
+                showLegalMoves(selectedPiece);
+                console.log("Switched selection to:", selectedPiece);
             }
             else {
                 const parentSquare = clickedElement.parentElement;
-                clickedElement.remove();
-                parentSquare.appendChild(selectedPiece);
-                selectedPiece = null;
-                console.log("Piece moved to:", parentSquare);
+                const targetRow = parseInt(parentSquare.dataset.row);
+                const targetCol = parseInt(parentSquare.dataset.col);
+
+                const startingSquare = selectedPiece.parentElement;
+                const startingRow = parseInt(startingSquare.dataset.row);
+                const startingCol = parseInt(startingSquare.dataset.col);
+
+                let capture = true;
+
+                if(selectedPiece.id.includes("Pawn")) {
+                    if(targetCol === startingCol) {
+                        capture = false;
+                        console.log("invalid move");
+                    }
+                }
+                else {
+                    let validMove = false;
+
+                    if(selectedPiece.id.includes("Bishop")) {
+                        if(isValidBishop(startingRow, startingCol, targetRow, targetCol)) {
+                            validMove = true;
+                        }
+                    }
+                    if(selectedPiece.id.includes("Knight")) {
+                        if(isValidKnight(startingRow, startingCol, targetRow, targetCol)) {
+                            validMove = true;
+                        }
+                    }
+                    if(selectedPiece.id.includes("Rook")) {
+                        if(isValidRook(startingRow, startingCol, targetRow, targetCol)) {
+                            validMove = true;
+                        }
+                    }
+                    if(selectedPiece.id.includes("Queen")) {
+                        if(isValidBishop(startingRow, startingCol, targetRow, targetCol) || isValidRook(startingRow, startingCol, targetRow, targetCol)) {
+                            validMove = true;
+                        } 
+                    }
+                    if(selectedPiece.id.includes("King")) {
+                        if(isValidKing(startingRow, startingCol, targetRow, targetCol)) {
+                            validMove = true;
+                        }
+                    }
+                    else if(selectedPiece.id.includes("white")) {
+                        if(targetRow === startingRow - 1 && targetCol === startingCol) {
+                            validMove = true;
+                        }
+                    }
+                    else if(selectedPiece.id.includes("black")) { 
+                            if(targetRow === startingRow + 1 && targetCol === startingCol) {
+                                validMove = true;
+                            }
+                    }
+                    capture = validMove;
+                } 
+                if(capture) {
+                    capturePiece(parentSquare, clickedElement);
+                }
             }
         }
     }
     else if(clickedElement.tagName === "IMG") {
         selectedPiece = clickedElement;
         selectedPiece.classList.add("selected");
+        showLegalMoves(selectedPiece);
         console.log("Selected piece:", selectedPiece);
     }
 })
+
+function checkMove(targetSquare) {
+    if(targetSquare.children.length === 0) {
+        movePiece(targetSquare);
+    }
+    else {
+        console.log("Square is occupied. Cannot move piece.");
+    }
+}
+
+function movePiece(targetSquare) {
+    targetSquare.appendChild(selectedPiece);
+    if(selectedPiece.classList.contains("selected")) {
+        selectedPiece.classList.remove("selected");
+    }
+    selectedPiece = null;
+    console.log("Piece moved to:", targetSquare);
+}
+
+function capturePiece(targetSquare, enemyPiece) {
+    enemyPiece.remove();
+    targetSquare.appendChild(selectedPiece);
+
+    if(selectedPiece.classList.contains("selected")) {
+        selectedPiece.classList.remove("selected");
+    }
+    console.log("Captured piece:", enemyPiece);
+    selectedPiece = null;
+}
+
+function isValidBishop(startingRow, startingCol, targetRow, targetCol) {
+    const rowDiff = targetRow - startingRow;
+    const colDiff = targetCol - startingCol;
+
+    if(rowDiff === 0 && colDiff === 0) {
+        return false;
+    }
+
+    if(Math.abs(rowDiff) != Math.abs(colDiff)) {
+        return false;
+    }
+
+    const rowStep = rowDiff > 0 ? 1 : -1;
+    const colStep = colDiff > 0 ? 1 : -1;
+
+    let currentRow = startingRow + rowStep;
+    let currentCol = startingCol + colStep;
+
+    while(currentRow !== targetRow && currentCol !== targetCol) {
+        if(currentRow === targetRow && currentCol === targetCol) {
+            break;
+        }
+        const square = document.querySelector(`[data-row='${currentRow}'][data-col='${currentCol}']`);
+
+        if(square && square.querySelector("img")) {
+            return false;
+        }
+        currentRow += rowStep;
+        currentCol += colStep;
+    }
+    return true;
+}
+
+function isValidKnight(startingRow, startingCol, targetRow, targetCol) {
+    const rowDiff = Math.abs(targetRow - startingRow);
+    const colDiff = Math.abs(targetCol - startingCol);
+
+    return (rowDiff === 2 && colDiff === 1) || (rowDiff === 1 && colDiff === 2);
+}
+
+function isValidRook(startingRow, startingCol, targetRow, targetCol) {
+    const rowDiff = targetRow - startingRow;
+    const colDiff = targetCol - startingCol;
+
+    if(rowDiff !== 0 && colDiff !== 0) {
+        return false;
+    }
+    if(rowDiff === 0 && colDiff === 0) {
+        return false;
+    }
+
+    const rowStep = rowDiff > 0 ? 1 : (rowDiff < 0 ? -1 : 0);
+    const colStep = colDiff > 0 ? 1 : (colDiff < 0 ? -1 : 0);
+
+    let currRow = startingRow + rowStep;
+    let currCol = startingCol + colStep;
+
+    while(currRow !== targetRow || currCol !== targetCol) {
+        if(currRow === targetRow && currCol === targetCol) {
+            break;
+        }
+        const square = document.querySelector(`[data-row='${currRow}'][data-col='${currCol}']`);
+
+        if(square && square.querySelector("img")) {
+            return false;
+        }
+
+        currRow += rowStep;
+        currCol += colStep;
+    }
+    return true;
+}
+
+function isValidKing(startingRow, startingCol, targetRow, targetCol) {
+    const rowDiff = Math.abs(targetRow - startingRow);
+    const colDiff = Math.abs(targetCol - startingCol);
+
+    if(rowDiff === 0 && colDiff === 0) {
+        return false;
+    }
+    return rowDiff <= 1 && colDiff <= 1;
+}
+
+function showLegalMoves(piece) {
+    clearLegalMoves();
+    const startingSquare = piece.parentElement;
+    const startingRow = parseInt(startingSquare.dataset.row);
+    const startingCol = parseInt(startingSquare.dataset.col);
+    const pieceColor = piece.id.includes("white") ? "white" : "black";
+
+    const allSquares = document.querySelectorAll(".white, .black");
+
+    allSquares.forEach(square => {
+        const targetRow = parseInt(square.dataset.row);
+        const targetCol = parseInt(square.dataset.col);
+        isLegal = false;
+        if(piece.id.includes("Pawn")) {
+            if(piece.id.includes("white")) {
+                if(startingRow === 6 && targetRow === 4 && startingCol === targetCol) {
+                    isLegal = true;
+                }
+                else if(targetRow === startingRow - 1 && startingCol === targetCol) {
+                    isLegal = true;
+                }
+            }
+            else if(selectedPiece.id.includes("black")) {
+                if(startingRow === 1 && targetRow === 3 && startingCol === targetCol) {
+                    isLegal = true;
+                }
+                else if(targetRow === startingRow + 1 && startingCol === targetCol) {
+                    isLegal = true;
+                }
+            }
+        }
+        else if(piece.id.includes("Bishop")) {
+            if(isValidBishop(startingRow, startingCol, targetRow, targetCol)) {
+                isLegal = true;
+            }
+        }
+        else if(piece.id.includes("Knight")) {
+            if(isValidKnight(startingRow, startingCol, targetRow, targetCol)) {
+                isLegal = true;
+            }
+        }
+        else if(piece.id.includes("Rook")) {
+            if(isValidRook(startingRow, startingCol, targetRow, targetCol)) {
+                isLegal = true;
+            }
+        }
+        else if(piece.id.includes("Queen")) {
+            if(isValidRook(startingRow, startingCol, targetRow, targetCol) || isValidBishop(startingRow, startingCol, targetRow, targetCol)) {
+                isLegal = true;
+            }
+        }
+        else if(piece.id.includes("King")) {
+            if(isValidKing(startingRow, startingCol, targetRow, targetCol)) {
+                isLegal = true;
+            }
+        }
+
+        if(isLegal && square.children.length > 0) {
+            const occupant = square.firstElementChild;
+            const isFriendly = (piece.id.includes("white") && occupant.id.includes("white") || piece.id.includes("black") && occupant.id.includes("black"));
+        if(isFriendly) {
+            isLegal = false;
+        }
+    }
+
+        if(isLegal) {
+            const dot = document.createElement("div");
+            dot.classList.add("dot");
+            square.appendChild(dot);
+        }
+    });
+}
+
+function clearLegalMoves() {
+    const legalDots = document.querySelectorAll(".dot");
+    legalDots.forEach(dot => dot.remove());
+}

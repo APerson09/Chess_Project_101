@@ -20,10 +20,12 @@
 
 .white {
     background-color: #C4A484;
+    position: relative;
 }
 
 .black {
     background-color: #654321;
+    position: relative;
 }
 
 .piece {
@@ -76,4 +78,16 @@
     height: 80%;
 
     margin: 10% auto;
+}
+
+.dot {
+background-color: gray;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    pointer-events: none;
 }

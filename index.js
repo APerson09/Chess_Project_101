@@ -90,6 +90,16 @@ for(let i = 0; i < 8; i++) {
 }
 
 let selectedPiece = null;
+const clipArt = {
+    "whiteQueen": "clipart303016.png",
+    "whiteRook" : "clipart1682458.png",
+    "whiteBishop" : "clipart1009099.png",
+    "whiteKnight" : "clipart426997.png",
+    "blackQueen" : "clipart1489784.png",
+    "blackRook" : "clipart427480.png",
+    "blackBishop" : "clipart2607314.png",
+    "blackKnight" : "clipart2612722.png",
+}
 
 board.addEventListener("click", function(event) {
     let clickedElement = event.target;
@@ -114,7 +124,11 @@ board.addEventListener("click", function(event) {
 
                 if(selectedPiece.id.includes("white")) {
                     if(startingRow === 6 && targetRow === 4 && startingCol === targetCol) {
-                        validMove = true;
+                        const checkSquareForMovement = document.querySelector(`[data-row='5'][data-col='${startingCol}']`);
+
+                        if(!clickedElement.querySelector("img") && checkSquareForMovement && !checkSquareForMovement.querySelector("img")) {
+                            validMove = true;
+                        }
                     }
                     else if(targetRow === startingRow - 1 && startingCol === targetCol) {
                         validMove = true;
@@ -122,7 +136,11 @@ board.addEventListener("click", function(event) {
                 }
                 else if(selectedPiece.id.includes("black")) {
                     if(startingRow === 1 && targetRow === 3 && startingCol === targetCol) {
-                        validMove = true;
+                        const checkSquareForMovement = document.querySelector(`[data-row='2'][data-col='${startingCol}']`);
+
+                        if(!clickedElement.querySelector("img") && checkSquareForMovement && !checkSquareForMovement.querySelector("img")) {
+                            validMove = true;
+                        }
                     }
                     else if(targetRow === startingRow + 1 && startingCol === targetCol) {
                         validMove = true;
@@ -316,6 +334,25 @@ function checkMove(targetSquare) {
 
 function movePiece(targetSquare) {
     targetSquare.appendChild(selectedPiece);
+
+    if(selectedPiece.id.includes("Pawn")) {
+        const targetRow = parseInt(targetSquare.dataset.row);
+        const isWhite = selectedPiece.id.includes("white");
+
+        const promotePiece = selectedPiece;
+        if((isWhite && targetRow === 0) || (!isWhite && targetRow === 7)) {
+            promotionMenu(targetSquare, isWhite, (chosenPiece) => {
+                promotePiece.src = clipArt[`${isWhite ? "white" : "black"}${chosenPiece}`];
+                promotePiece.id = `${isWhite ? "white" : "black"}-${chosenPiece}`;
+                
+                promotePiece.classList.remove("piece", "pawn", "rook", "bishop", "horse", "queen", "king");
+                
+                const cssClass = chosenPiece === "Knight" ? "horse" : chosenPiece.toLowerCase();
+                promotePiece.classList.add("piece", cssClass);
+            });
+            console.log("Hooray");
+        } 
+    }
     if(selectedPiece.classList.contains("selected")) {
         selectedPiece.classList.remove("selected");
     }
@@ -327,11 +364,31 @@ function capturePiece(targetSquare, enemyPiece) {
     enemyPiece.remove();
     targetSquare.appendChild(selectedPiece);
 
-    if(selectedPiece.classList.contains("selected")) {
-        selectedPiece.classList.remove("selected");
+    const promotePiece = selectedPiece;
+    if(promotePiece.id.includes("Pawn")) {
+        const targetRow = parseInt(targetSquare.dataset.row);
+        const isWhite = selectedPiece.id.includes("white");
+
+        if((isWhite && targetRow === 0) || (!isWhite && targetRow === 7)) {
+            promotionMenu(targetSquare, isWhite, (chosenPiece) => {
+                promotePiece.src = clipArt[`${isWhite ? "white" : "black"}${chosenPiece}`];
+                promotePiece.id = `${isWhite ? "white" : "black"}-${chosenPiece}`;
+                
+                promotePiece.classList.remove("piece", "pawn", "rook", "bishop", "horse", "queen", "king");
+                
+                const cssClass = chosenPiece === "Knight" ? "horse" : chosenPiece.toLowerCase();
+                promotePiece.classList.add("piece", cssClass);
+            });
+            console.log("Hooray");
+        } 
+    }
+
+    if(promotePiece.classList.contains("selected")) {
+        promotePiece.classList.remove("selected");
     }
     console.log("Captured piece:", enemyPiece);
     selectedPiece = null;
+    clearLegalMoves();
 }
 
 function isValidBishop(startingRow, startingCol, targetRow, targetCol) {
@@ -433,18 +490,30 @@ function showLegalMoves(piece) {
         if(piece.id.includes("Pawn")) {
             if(piece.id.includes("white")) {
                 if(startingRow === 6 && targetRow === 4 && startingCol === targetCol) {
-                    isLegal = true;
+                    const checkSquareForMovement = document.querySelector(`[data-row='5'][data-col='${startingCol}']`);
+
+                    if(!square.querySelector("img") && checkSquareForMovement && !checkSquareForMovement.querySelector("img")) {
+                        isLegal = true;
+                    }
                 }
                 else if(targetRow === startingRow - 1 && startingCol === targetCol) {
-                    isLegal = true;
+                    if(!square.querySelector("img")) {
+                        isLegal = true;
+                    }
                 }
             }
-            else if(selectedPiece.id.includes("black")) {
+            else if(piece.id.includes("black")) {
                 if(startingRow === 1 && targetRow === 3 && startingCol === targetCol) {
-                    isLegal = true;
+                    const checkSquareForMovement = document.querySelector(`[data-row='2'][data-col='${startingCol}']`);
+
+                    if(!square.querySelector("img") && checkSquareForMovement && !checkSquareForMovement.querySelector("img")) {
+                        isLegal = true;
+                    }
                 }
                 else if(targetRow === startingRow + 1 && startingCol === targetCol) {
-                    isLegal = true;
+                    if(!square.querySelector("img")) {
+                        isLegal = true;
+                    }
                 }
             }
         }
@@ -493,4 +562,50 @@ function showLegalMoves(piece) {
 function clearLegalMoves() {
     const legalDots = document.querySelectorAll(".dot");
     legalDots.forEach(dot => dot.remove());
+}
+
+function promotionMenu(targetSquare, isWhite, callback) {
+    const menu = document.createElement("div");
+    
+    menu.style.position = "absolute";
+    menu.style.top = "0";
+    menu.style.left = "0";
+    menu.style.width = "100%";
+    menu.style.height = "100%";
+    
+    menu.style.display = "grid";
+    menu.style.gridTemplateColumns = "50% 50%";
+    menu.style.gridTemplateRows = "50% 50%";
+    menu.style.backgroundColor = "rgba(40, 40, 40, 0.95)";
+    menu.style.border = "2px solid #d4af37";
+    menu.style.zIndex = "1000";
+    menu.style.boxSizing = "border-box";
+
+    const pieces = ["Queen", "Rook", "Bishop", "Knight"];
+
+    pieces.forEach(pieceName => {
+        const img = document.createElement("img");
+        const colorPrefix = isWhite ? "white" : "black";
+        const pieceKey = `${colorPrefix}${pieceName}`;
+
+        img.src = clipArt[pieceKey];
+        img.id = `${colorPrefix}-${pieceName}`;
+        
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "contain";
+        img.style.cursor = "pointer";
+        img.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+        img.style.boxSizing = "border-box";
+        img.style.border = "1px solid #555";
+
+        img.addEventListener("click", () => {
+            callback(pieceName);
+            menu.remove();
+        });
+
+        menu.appendChild(img);
+    });
+
+    targetSquare.appendChild(menu);
 }

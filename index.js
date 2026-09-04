@@ -486,32 +486,30 @@ function showLegalMoves(piece) {
     allSquares.forEach(square => {
         const targetRow = parseInt(square.dataset.row);
         const targetCol = parseInt(square.dataset.col);
-        isLegal = false;
-        if(piece.id.includes("Pawn")) {
-            if(piece.id.includes("white")) {
-                if(startingRow === 6 && targetRow === 4 && startingCol === targetCol) {
-                    const checkSquareForMovement = document.querySelector(`[data-row='5'][data-col='${startingCol}']`);
+        let isLegal = false;
+        const occupant = square.querySelector("img");
 
-                    if(!square.querySelector("img") && checkSquareForMovement && !checkSquareForMovement.querySelector("img")) {
-                        isLegal = true;
-                    }
-                }
-                else if(targetRow === startingRow - 1 && startingCol === targetCol) {
-                    if(!square.querySelector("img")) {
-                        isLegal = true;
-                    }
+        if(piece.id.includes("Pawn")) {
+            const direction = piece.id.includes("white") ? -1 : 1;
+            const startRank = piece.id.includes("white") ? 6 : 1;
+            
+
+            if(targetCol === startingCol && targetRow === startingRow + direction && !occupant) {
+                isLegal = true;
+            }
+
+            else if(targetCol === startingCol && startingRow === startRank && targetRow === startingRow + (direction * 2)) {
+                const intermediateRow = startingRow + direction;
+                const intermediateSquare = document.querySelector(`[data-row='${intermediateRow}'][data-col='${startingCol}']`);
+                if(!occupant && intermediateSquare && !intermediateSquare.querySelector("img")) {
+                    isLegal = true;
                 }
             }
-            else if(piece.id.includes("black")) {
-                if(startingRow === 1 && targetRow === 3 && startingCol === targetCol) {
-                    const checkSquareForMovement = document.querySelector(`[data-row='2'][data-col='${startingCol}']`);
 
-                    if(!square.querySelector("img") && checkSquareForMovement && !checkSquareForMovement.querySelector("img")) {
-                        isLegal = true;
-                    }
-                }
-                else if(targetRow === startingRow + 1 && startingCol === targetCol) {
-                    if(!square.querySelector("img")) {
+            else if(Math.abs(targetCol - startingCol) === 1 && targetRow === startingRow + direction) {
+                if(occupant) {
+                    const isFriendly = occupant.id.includes(pieceColor);
+                    if(!isFriendly) {
                         isLegal = true;
                     }
                 }
@@ -552,15 +550,23 @@ function showLegalMoves(piece) {
     }
 
         if(isLegal) {
-            const dot = document.createElement("div");
-            dot.classList.add("dot");
-            square.appendChild(dot);
+            if(square.querySelector("img")) {
+                const capture = document.createElement("div");
+                capture.classList.add("captureRing");
+                square.appendChild(capture);
+                console.log("x");
+            }
+            else {
+                const dot = document.createElement("div");
+                dot.classList.add("dot");
+                square.appendChild(dot);
+            }
         }
     });
 }
 
 function clearLegalMoves() {
-    const legalDots = document.querySelectorAll(".dot");
+    const legalDots = document.querySelectorAll(".dot, .captureRing");
     legalDots.forEach(dot => dot.remove());
 }
 
@@ -609,3 +615,4 @@ function promotionMenu(targetSquare, isWhite, callback) {
 
     targetSquare.appendChild(menu);
 }
+

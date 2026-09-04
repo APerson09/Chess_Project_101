@@ -92,3 +92,16 @@ background-color: gray;
     pointer-events: none;
 }
 
+.captureRing {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85%;
+    height: 85%;
+    border: 6px solid rgba(0, 0, 0, 0.35);
+    border-radius: 50%;
+    box-sizing: border-box;
+    pointer-events: none;
+    z-index: 1000;
+}
